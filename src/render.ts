@@ -200,6 +200,7 @@ export async function render(input: ProjectInput | Project, options: RenderOptio
         backdropUri: visual && !isVideo && layout !== 'fullbleed' ? stageBackdrop(visual, publicDir, `scene_${scene.id}_backdrop`) : undefined,
         audioUri: stage(audio, publicDir, `scene_${scene.id}_audio`),
         isVideo,
+        clipDurationInFrames: isVideo && !isUrl(visual!) ? Math.round(probeDuration(visual!) * FPS) : undefined,
         layout,
         panY: scene.panY,
         missing: !visual,

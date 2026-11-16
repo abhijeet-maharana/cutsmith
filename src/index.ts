@@ -18,4 +18,4 @@ export {
 export { lintRetention, type RenderOptions, render } from './render.js';
 export { type Review, type Reviewer, ReviewerSchema, reviewVideo } from './review.js';
 export { BUILTIN_SFX } from './sfx.js';
-export { openAICompatibleVoice, silentVoice, type VoiceProvider, voiceFromConfig } from './tts/voice.js';
+export { geminiVoice, openAICompatibleVoice, silentVoice, type VoiceProvider, voiceFromConfig } from './tts/voice.js';

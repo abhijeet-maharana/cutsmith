@@ -16,6 +16,8 @@ export interface RenderScene {
   backdropUri?: string;
   audioUri?: string;
   isVideo?: boolean;
+  /** A clip's own length; when it is shorter than the scene, its last frame is held to the end. */
+  clipDurationInFrames?: number;
   layout?: 'fullbleed' | 'framed' | 'fitted';
   panY?: [number, number];
   missing?: boolean;

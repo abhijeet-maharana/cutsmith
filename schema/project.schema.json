@@ -207,6 +207,37 @@
           "properties": {
             "provider": {
               "type": "string",
+              "const": "gemini",
+              "description": "Gemini TTS through the Gemini API (a Google AI Studio key)."
+            },
+            "apiKeyEnv": {
+              "default": "GEMINI_API_KEY",
+              "description": "Name of the environment variable holding the key (never the key itself).",
+              "type": "string"
+            },
+            "model": {
+              "default": "gemini-3.8-flash-tts",
+              "type": "string"
+            },
+            "voice": {
+              "type": "string",
+              "description": "A prebuilt Gemini voice, e.g. \"Charon\", \"Kore\", \"Puck\"."
+            },
+            "prefix": {
+              "description": "Text sent before every line, e.g. a short style cue (\"Say calmly: \"). Long director's notes can make the model repeat the line; a take that runs far too long is made again.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "provider",
+            "voice"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
               "const": "none",
               "description": "No voice: silent scenes timed at `wordsPerSecond`. For drafts and tests."
             },

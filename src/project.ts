@@ -47,6 +47,13 @@ export const VoiceSchema = z.discriminatedUnion('provider', [
     format: z.enum(['wav', 'mp3']).default('wav'),
   }),
   z.object({
+    provider: z.literal('gemini').describe('Gemini TTS through the Gemini API (a Google AI Studio key).'),
+    apiKeyEnv: z.string().default('GEMINI_API_KEY').describe('Name of the environment variable holding the key (never the key itself).'),
+    model: z.string().default('gemini-3.8-flash-tts'),
+    voice: z.string().describe('A prebuilt Gemini voice, e.g. "Charon", "Kore", "Puck".'),
+    prefix: z.string().optional().describe('Text sent before every line, e.g. a short style cue ("Say calmly: "). Long director\'s notes can make the model repeat the line; a take that runs far too long is made again.'),
+  }),
+  z.object({
     provider: z.literal('none').describe('No voice: silent scenes timed at `wordsPerSecond`. For drafts and tests.'),
     wordsPerSecond: z.number().positive().default(2.6),
   }),

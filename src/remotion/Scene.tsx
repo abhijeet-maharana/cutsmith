@@ -1,5 +1,5 @@
 import React from 'react';
-import { Audio, Img, interpolate, OffthreadVideo, Sequence, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { Audio, Freeze, Img, interpolate, OffthreadVideo, Sequence, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import type { Geometry } from './geometry';
 import { resolveSrc } from './resolve-src';
 import { Subtitles } from './Subtitles';
@@ -79,6 +79,13 @@ export const Scene: React.FC<SceneProps> = ({ scene, theme, geometry: g, whooshU
   const phone = { top: stage.top, left: Math.round((width - phoneWidth) / 2), width: phoneWidth, height: phoneHeight };
   const fill = { position: 'absolute' as const, inset: 0, width: '100%', height: '100%', objectFit: 'cover' as const };
 
+  // A clip shorter than its narration (a short screen recording) holds its last frame instead of going blank.
+  const holdAt = scene.clipDurationInFrames && scene.clipDurationInFrames < total ? scene.clipDurationInFrames - 1 : undefined;
+  const clip = (style: React.CSSProperties) => {
+    const video = <OffthreadVideo muted src={resolveSrc(scene.assetUri)} style={style} />;
+    return holdAt === undefined ? video : <Freeze frame={holdAt} active={(f) => f >= holdAt}>{video}</Freeze>;
+  };
+
   const renderStage = () => {
     // 1. Missing visual: a clearly labelled slot, so nobody posts it by mistake.
     if (!hasVisual) {
@@ -114,7 +121,7 @@ export const Scene: React.FC<SceneProps> = ({ scene, theme, geometry: g, whooshU
     if (layout === 'fullbleed') {
       // Footage is muted: the voice track carries the sound, so loudness stays under control.
       return scene.isVideo ? (
-        <OffthreadVideo muted src={resolveSrc(scene.assetUri)} style={fill} />
+        clip(fill)
       ) : (
         <Img src={resolveSrc(scene.assetUri)} style={{ ...fill, transform: `scale(${zoom * beatZoom})` }} />
       );
@@ -127,7 +134,7 @@ export const Scene: React.FC<SceneProps> = ({ scene, theme, geometry: g, whooshU
         <>
           {scene.backdropUri && <Img src={resolveSrc(scene.backdropUri)} style={fill} />}
           {scene.isVideo ? (
-            <OffthreadVideo muted src={resolveSrc(scene.assetUri)} style={box} />
+            clip(box)
           ) : (
             <Img src={resolveSrc(scene.assetUri)} style={{ ...box, transform: `scale(${zoom * beatZoom})` }} />
           )}
@@ -152,7 +159,7 @@ export const Scene: React.FC<SceneProps> = ({ scene, theme, geometry: g, whooshU
           }}
         >
           {scene.isVideo ? (
-            <OffthreadVideo muted src={resolveSrc(scene.assetUri)} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: `50% ${panY}%` }} />
+            clip({ width: '100%', height: '100%', objectFit: 'cover', objectPosition: `50% ${panY}%` })
           ) : (
             <Img
               src={resolveSrc(scene.assetUri)}
