@@ -1,0 +1,8 @@
+{
+  "provider": "openai-compatible",
+  "baseURL": "http://localhost:8880/v1",
+  "apiKeyEnv": "KOKORO_API_KEY",
+  "model": "kokoro",
+  "voice": "af_heart",
+  "format": "mp3"
+}

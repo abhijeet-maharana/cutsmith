@@ -1,0 +1,8 @@
+{
+  "provider": "openai-compatible",
+  "baseURL": "http://localhost:4000/v1",
+  "apiKeyEnv": "PROXY_API_KEY",
+  "model": "gemini-2.5-flash-preview-tts",
+  "voice": "Puck",
+  "prefix": "### DIRECTOR'S NOTES\nAccent: natural Indian English. Style: upbeat, conversational.\nRead only the transcript below.\n\n### TRANSCRIPT"
+}

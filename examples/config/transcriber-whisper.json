@@ -1,0 +1,6 @@
+{
+  "kind": "whisper",
+  "apiKeyEnv": "OPENAI_API_KEY",
+  "model": "whisper-1",
+  "language": "en"
+}

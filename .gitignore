@@ -1,0 +1,5 @@
+node_modules/
+out/
+*.render.json
+.DS_Store
+.env

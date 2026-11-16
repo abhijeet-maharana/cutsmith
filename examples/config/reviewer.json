@@ -1,0 +1,6 @@
+{
+  "apiKeyEnv": "OPENAI_API_KEY",
+  "model": "gpt-4o",
+  "audio": false,
+  "brief": "A 30-second Short showing a developer tool. Code and terminal text must be readable."
+}

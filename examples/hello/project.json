@@ -1,0 +1,48 @@
+{
+  "$schema": "../../schema/project.schema.json",
+  "title": "Hello cutsmith",
+  "format": "vertical",
+  "brand": "brand.json",
+  "assetDirs": ["assets"],
+  "voice": { "provider": "none" },
+  "scenes": [
+    {
+      "id": 1,
+      "text": "Stop editing videos by hand. Let your agent write them.",
+      "hookText": "Stop editing by hand",
+      "hookTone": "curiosity",
+      "visual": "clip.mp4",
+      "sfx": { "sound": "whip", "cue": "agent" }
+    },
+    {
+      "id": 2,
+      "text": "Your agent writes one JSON file: the lines, the visuals and the cues.",
+      "badge": "📄 project.json",
+      "badgeCue": "JSON",
+      "visual": "app-screenshot.png",
+      "panCue": ["lines", "cues"]
+    },
+    {
+      "id": 3,
+      "text": "Photos of any shape are shown whole, never cropped.",
+      "visual": "landscape-photo.jpg"
+    },
+    {
+      "id": 4,
+      "text": "Missing a visual? You get a clear slot instead of a guess.",
+      "visualNeeded": "A phone showing the finished video"
+    },
+    {
+      "id": 5,
+      "text": "Voice, subtitles, music and the end card come out of one command. Save this for later.",
+      "visual": "vertical-photo.jpg",
+      "sfx": { "sound": "ding", "cue": "command" }
+    }
+  ],
+  "endCard": {
+    "headline": "Try cutsmith",
+    "button": "STAR ON GITHUB",
+    "url": "github.com/abhijeet-maharana/cutsmith",
+    "tagline": "Videos as code."
+  }
+}

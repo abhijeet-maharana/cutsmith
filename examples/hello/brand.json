@@ -1,0 +1,12 @@
+{
+  "name": "Example",
+  "colors": {
+    "background": "#111827",
+    "backgroundDeep": "#030712",
+    "accent": "#38BDF8",
+    "onAccent": "#030712",
+    "text": "#FFFFFF",
+    "frame": "#1F2937"
+  },
+  "font": { "family": "Inter", "googleFont": "Inter:wght@700;800;900" }
+}

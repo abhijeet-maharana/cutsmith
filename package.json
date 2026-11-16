@@ -1,0 +1,60 @@
+{
+  "name": "cutsmith",
+  "version": "0.1.0",
+  "description": "Video engine for AI agents: a JSON script or your own recording in, a voiced, subtitled video out (vertical Shorts/Reels or 16:9).",
+  "license": "MIT",
+  "author": "Abhijeet Maharana",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhijeet-maharana/cutsmith.git"
+  },
+  "keywords": [
+    "video",
+    "remotion",
+    "ai-agents",
+    "claude-code",
+    "shorts",
+    "reels",
+    "tts",
+    "subtitles",
+    "video-generation"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "bin": {
+    "cutsmith": "bin/cutsmith.js"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "cutsmith": "tsx src/cli.ts",
+    "example": "tsx src/cli.ts render examples/hello/project.json",
+    "schema": "tsx src/cli.ts schema > schema/project.schema.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "4.0.118",
+    "@remotion/bundler": "4.0.544",
+    "@remotion/renderer": "4.0.544",
+    "@remotion/sfx": "4.0.544",
+    "ai": "7.0.173",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.544",
+    "tsx": "4.23.15",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "typescript": "7.0.2",
+    "vitest": "5.1.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true
+  }
+}

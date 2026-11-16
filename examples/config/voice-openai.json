@@ -1,0 +1,7 @@
+{
+  "provider": "openai-compatible",
+  "apiKeyEnv": "OPENAI_API_KEY",
+  "model": "gpt-4o-mini-tts",
+  "voice": "ash",
+  "instructions": "Upbeat, conversational, quick pace, like talking to a friend. Never like an advert."
+}
