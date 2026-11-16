@@ -20,6 +20,8 @@ export interface RenderOptions {
   fresh?: boolean | number[];
   /** Your own voice provider instead of the project's `voice`. */
   voice?: VoiceProvider;
+  /** Scratch folder for staged files (a fresh subfolder is made and removed). Default: the OS temp folder. */
+  workDir?: string;
   /** TTS cache folder. Default ~/.cache/cutsmith/tts or $CUTSMITH_CACHE_DIR. */
   cacheDir?: string;
   /** Browser tabs rendering at once. Default: Remotion's (half the CPU cores). */
@@ -83,7 +85,7 @@ function buildTheme(brand: Brand, brandDir: string, publicDir: string): Theme {
  * Short-form retention checks (vertical only). Never blocks: Shorts and Reels rank on completion,
  * sends and saves, so flag scripts that miss the basics.
  */
-export function lintRetention(scenes: RenderScene[]): RetentionWarning[] {
+export function lintRetention(scenes: RenderScene[], { maxSeconds = 60 }: { maxSeconds?: number } = {}): RetentionWarning[] {
   const warnings: RetentionWarning[] = [];
   const first = scenes[0];
   if (!first) return warnings;
@@ -105,7 +107,7 @@ export function lintRetention(scenes: RenderScene[]): RetentionWarning[] {
     }
   }
   const total = scenes.reduce((sum, s) => sum + s.durationSec, 0);
-  if (total > 60) warnings.push({ code: 'TOO_LONG', message: `Total ${total.toFixed(1)} s. Shorts/Reels do best at 20-45 s.` });
+  if (total > maxSeconds) warnings.push({ code: 'TOO_LONG', message: `Total ${total.toFixed(1)} s is over ${maxSeconds} s. Shorts/Reels do best at 20-45 s.` });
   if (total < 15) warnings.push({ code: 'TOO_SHORT', message: `Total ${total.toFixed(1)} s is very short; make sure the payoff still lands.` });
   const tail = scenes.slice(-2).map((s) => s.text).join(' ');
   if (!/share|save|send|forward|follow|subscribe|comment|bhej|शेयर|सेव|भेज/i.test(tail)) {
@@ -124,7 +126,9 @@ export async function render(input: ProjectInput | Project, options: RenderOptio
   const cover = path.resolve(options.cover ?? out.replace(/\.mp4$/i, '') + '-cover.jpg');
   const voice = options.voice ?? voiceFromConfig(project.voice, options.cacheDir);
 
-  const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cutsmith-'));
+  const scratchRoot = options.workDir ?? os.tmpdir();
+  fs.mkdirSync(scratchRoot, { recursive: true });
+  const workDir = fs.mkdtempSync(path.join(scratchRoot, 'cutsmith-'));
   const publicDir = path.join(workDir, 'public');
   fs.mkdirSync(publicDir);
 
@@ -133,6 +137,18 @@ export async function render(input: ProjectInput | Project, options: RenderOptio
     const theme = buildTheme(brand, brandDir, publicDir);
     const scenes: RenderScene[] = [];
     const missingVisuals: number[] = [];
+
+    /** A sound name: a local file from `sounds` first, then a built-in, then a file path or URL. */
+    const resolveSound = (name: string, stageAs: string): { src: string; volume: number } => {
+      const builtin = builtinSfx(name);
+      const local = project.sounds[name];
+      const file = local ? resolveFile(local, dirs) : builtin ? null : resolveFile(name, dirs);
+      if (local && !file) throw new Error(`Sound file ${local} (sounds.${name}) not found`);
+      if (!file && !builtin) throw new Error(`Sound "${name}" is not a built-in (${Object.keys(BUILTIN_SFX).join(', ')}), a file or a URL`);
+      const volume = builtin?.volume ?? 0.22;
+      if (!file) return { src: builtin!.src, volume };
+      return { src: isUrl(file) ? file : stage(file, publicDir, stageAs), volume };
+    };
     console.log(`[cutsmith] 🚀 ${project.title ?? 'video'}: ${project.scenes.length} scenes, ${project.format}`);
 
     for (const scene of project.scenes) {
@@ -172,11 +188,8 @@ export async function render(input: ProjectInput | Project, options: RenderOptio
       let sfx: RenderScene['sfx'];
       if (scene.sfx) {
         const at = cueAt(scene.sfx.cue);
-        const builtin = builtinSfx(scene.sfx.sound);
-        const file = builtin ? null : resolveFile(scene.sfx.sound, dirs);
-        if (!builtin && !file) throw new Error(`Scene ${scene.id}: sound "${scene.sfx.sound}" is not a built-in (${Object.keys(BUILTIN_SFX).join(', ')}), a file or a URL`);
-        const src = builtin ? builtin.src : isUrl(file!) ? file! : stage(file!, publicDir, `sfx_${scene.id}`);
-        if (at !== undefined) sfx = { src, volume: scene.sfx.volume ?? builtin?.volume ?? 0.22, startSec: at };
+        const sound = resolveSound(scene.sfx.sound, `sfx_${scene.id}`);
+        if (at !== undefined) sfx = { src: sound.src, volume: scene.sfx.volume ?? sound.volume, startSec: at };
       }
 
       scenes.push({
@@ -204,7 +217,7 @@ export async function render(input: ProjectInput | Project, options: RenderOptio
       });
     }
 
-    const warnings = project.lint && project.format === 'vertical' ? lintRetention(scenes) : [];
+    const warnings = project.lint && project.format === 'vertical' ? lintRetention(scenes, typeof project.lint === 'object' ? project.lint : {}) : [];
     for (const w of warnings) console.log(`[cutsmith] 📉 [${w.code}] ${w.message}`);
 
     let musicUri: string | undefined;
@@ -223,7 +236,7 @@ export async function render(input: ProjectInput | Project, options: RenderOptio
       musicUri,
       musicVolume: project.music?.volume ?? 0.025,
       endCard: endCard && { ...endCard },
-      whooshUri: project.transitions.whoosh ? BUILTIN_SFX.whoosh.src : undefined,
+      whooshUri: project.transitions.whoosh ? resolveSound('whoosh', 'whoosh').src : undefined,
       progressBar: project.progressBar,
       subtitles: project.subtitles,
     };

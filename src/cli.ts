@@ -62,7 +62,7 @@ async function main(argv: string[]): Promise<void> {
 
   if (command === 'sfx') {
     for (const [name, s] of Object.entries(BUILTIN_SFX)) console.log(`${name.padEnd(13)} ${s.use}`);
-    console.log('\nAny other @remotion/sfx name, a file path or a URL works too.');
+    console.log('\nA file path or a URL works too.');
     return;
   }
 

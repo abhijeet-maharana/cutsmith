@@ -91,6 +91,8 @@ One JSON file describes the video. Paths are relative to the file, then to each 
 | `sfx` | `{ "sound": "ding", "cue": "word" }`. `cutsmith sfx` lists the built-ins; a file path or URL works too |
 | `hideSubtitles` | No subtitles on this scene |
 
+Project-level extras: `music` (a looping track and its volume), `endCard`, `progressBar`, `transitions.whoosh`, `subtitles` (words per chunk, uppercase), `lint` (`false`, or `{ "maxSeconds": 45 }`), and `sounds`: local files for sound names (`{ "ding": "sfx/ding.wav", "whoosh": "sfx/whoosh.wav" }`), so a render needs no network for them.
+
 ### Brand
 
 ```json

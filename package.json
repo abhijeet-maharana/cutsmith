@@ -26,21 +26,27 @@
   "bin": {
     "cutsmith": "bin/cutsmith.js"
   },
+  "main": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    }
   },
   "scripts": {
+    "prepare": "tsc -p tsconfig.build.json",
     "cutsmith": "tsx src/cli.ts",
     "example": "tsx src/cli.ts render examples/hello/project.json",
     "schema": "tsx src/cli.ts schema > schema/project.schema.json",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build:types": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
     "@ai-sdk/openai": "4.0.118",
     "@remotion/bundler": "4.0.544",
     "@remotion/renderer": "4.0.544",
-    "@remotion/sfx": "4.0.544",
     "ai": "7.0.173",
     "react": "19.3.1",
     "react-dom": "19.3.1",

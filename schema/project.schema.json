@@ -379,6 +379,17 @@
         }
       }
     },
+    "sounds": {
+      "default": {},
+      "description": "Local files for sound names, e.g. { \"ding\": \"sfx/ding.wav\", \"whoosh\": \"sfx/whoosh.wav\" }. They override the built-ins (keeping their volume), so a render needs no network for them.",
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
     "progressBar": {
       "default": true,
       "type": "boolean"
@@ -409,8 +420,22 @@
     },
     "lint": {
       "default": true,
-      "description": "Print short-form retention warnings (vertical only). Never blocks.",
-      "type": "boolean"
+      "description": "Short-form retention warnings (vertical only); never blocks. An object sets the length above which TOO_LONG is raised.",
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "maxSeconds": {
+              "default": 60,
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        }
+      ]
     }
   },
   "required": [

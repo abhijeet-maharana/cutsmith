@@ -95,10 +95,17 @@ export const ProjectSchema = z.object({
   brand: z.union([z.string().describe('Path to a brand.json'), BrandSchema]).optional(),
   endCard: z.union([EndCardSchema, z.literal(false)]).optional().describe('false = no end card. Left out = no end card.'),
   transitions: z.object({ whoosh: z.boolean().default(true) }).prefault({}),
+  sounds: z
+    .record(z.string(), z.string())
+    .default({})
+    .describe('Local files for sound names, e.g. { "ding": "sfx/ding.wav", "whoosh": "sfx/whoosh.wav" }. They override the built-ins (keeping their volume), so a render needs no network for them.'),
   progressBar: z.boolean().default(true),
   subtitles: z.object({ wordsPerChunk: z.number().int().min(1).max(8).default(3), uppercase: z.boolean().default(true) }).prefault({}),
   assetDirs: z.array(z.string()).default([]).describe('Folders searched for bare file names in visual/audio/music.'),
-  lint: z.boolean().default(true).describe('Print short-form retention warnings (vertical only). Never blocks.'),
+  lint: z
+    .union([z.boolean(), z.object({ maxSeconds: z.number().positive().default(60) })])
+    .default(true)
+    .describe('Short-form retention warnings (vertical only); never blocks. An object sets the length above which TOO_LONG is raised.'),
 });
 
 export type Scene = z.infer<typeof SceneSchema>;

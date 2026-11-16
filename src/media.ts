@@ -1,4 +1,4 @@
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -83,6 +83,10 @@ export function silence(seconds: number, outFile: string): void {
  * video isn't quieter than the ones around it. The video stream is copied untouched.
  */
 export function normalizeLoudness(videoPath: string): void {
+  // A silent soundtrack (a draft with no voice, music or effects) has no loudness to measure: ffmpeg's
+  // loudnorm turns it into NaN and the encoder fails, so it is left as it is.
+  const peak = spawnSync('ffmpeg', ['-hide_banner', '-i', videoPath, '-vn', '-af', 'volumedetect', '-f', 'null', '-'], { encoding: 'utf-8' }).stderr.match(/max_volume:\s*(-?[\d.]+|-inf) dB/);
+  if (!peak || peak[1] === '-inf' || parseFloat(peak[1]) < -60) return;
   const tmp = `${videoPath}.loudnorm.mp4`;
   ffmpeg(['-i', videoPath, '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000', tmp]);
   fs.renameSync(tmp, videoPath);

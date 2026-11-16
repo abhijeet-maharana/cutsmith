@@ -3,3 +3,4 @@ out/
 *.render.json
 .DS_Store
 .env
+dist/

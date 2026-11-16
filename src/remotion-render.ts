@@ -5,7 +5,9 @@ import { bundle } from '@remotion/bundler';
 import { renderMedia, renderStill, selectComposition } from '@remotion/renderer';
 import type { VideoProps } from './remotion/types.js';
 
-const ENTRY = path.join(path.dirname(fileURLToPath(import.meta.url)), 'remotion', 'Root.tsx');
+// __dirname when a CommonJS project loads this file through tsx; import.meta.url when it runs as ESM.
+const HERE = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
+const ENTRY = path.join(HERE, 'remotion', 'Root.tsx');
 const COMPOSITION = 'cutsmith';
 /** The cover is the video at 1 s: the hook text on the first visual, after the white flash. */
 const COVER_FRAME = 30;
